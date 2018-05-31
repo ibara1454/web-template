@@ -1,11 +1,12 @@
 import gulp from 'gulp';
+import stylus from 'gulp-stylus';
 import webpack from 'webpack';
 import browserSync from 'browser-sync';
 import webpackConfig from './webpack.config.babel';
 
 const browser = browserSync.create();
 
-gulp.task('webpack', (done) => {
+gulp.task('compile:js', (done) => {
   webpack(webpackConfig, (err, stats) => {
     if (err || stats.hasErrors()) {
       done(stats);
@@ -15,19 +16,22 @@ gulp.task('webpack', (done) => {
   });
 });
 
+gulp.task('compile:css', () => {
+  return gulp.src('src/css/style.styl', {base: 'src'})
+    .pipe(stylus({
+      'include css': true
+    }))
+    .pipe(gulp.dest('build'));
+});
+
 gulp.task('copy:html', () => {
   return gulp.src('src/**/*.html', {base: 'src'})
     .pipe(gulp.dest('build'));
 });
 
-gulp.task('copy:css', () => {
-  return gulp.src('src/css/**', {base: 'src'})
-    .pipe(gulp.dest('build'));
-});
+gulp.task('copy', gulp.task('copy:html'));
 
-gulp.task('copy', gulp.parallel('copy:html', 'copy:css'));
-
-gulp.task('build', gulp.parallel('copy', 'webpack'));
+gulp.task('build', gulp.parallel('copy', 'compile:css', 'compile:js'));
 
 gulp.task('browser-sync', () => {
   browser.init({
@@ -45,11 +49,11 @@ gulp.task('browser:reload', (done) => {
 gulp.task('server',
   gulp.parallel('browser-sync', () => {
     gulp.watch('src/**/*.html', gulp.series('copy:html', 'browser:reload'));
-    gulp.watch('src/css/**', gulp.series('copy:css', 'browser:reload'));
-    gulp.watch('src/js/**/*.js', gulp.series('webpack', 'browser:reload'));
+    gulp.watch('src/css/**', gulp.series('compile:css', 'browser:reload'));
+    gulp.watch('src/js/**', gulp.series('compile:js', 'browser:reload'));
   })
 );
 
-gulp.task('build', gulp.parallel('webpack', 'copy'));
+gulp.task('build', gulp.parallel('compile:css', 'compile:js', 'copy'));
 
 gulp.task('default', gulp.series('build', 'server'));

@@ -1,11 +1,24 @@
 # web-template
 
+For SPA.
+
 ## Environment
 
  - Eslint
  - Webpack 7+ (beta)
  - Gulp 4+ (beta)
+ - Stylus
  - Babel
+
+## Usage
+
+### Build
+
+`npx gulp build`
+
+### Start browser-sync server, and build on change
+
+`npx gulp server`
 
 ## Notes
 
@@ -23,4 +36,8 @@ Same as webpack.
 
 ### JavaScript and Css and ...
 
-Only use webpack to bundle js files. Css's will copied to the build directory by gulp.
+Only use webpack to bundle js files. *.styl's will be compiled to the build directory by gulp.
+
+Js Entry: `/js/bundle.js`
+
+Css Entry: `/css/style.css`
