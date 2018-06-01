@@ -1,8 +1,10 @@
 # web-template
 
-For SPA.
+Template of fast-building SPA.
 
 ## Environment
+
+Main tools
 
  - Eslint
  - Webpack 7+ (beta)
